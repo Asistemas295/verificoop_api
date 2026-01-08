@@ -1,0 +1,49 @@
+﻿services:
+  - type: pserv
+    name: verificoop-db
+    env: docker
+    image:
+      url: mariadb:11
+    disk:
+      name: mariadb-data
+      mountPath: /var/lib/mysql
+      sizeGB: 1
+    envVars:
+      - key: MARIADB_DATABASE
+        value: verificoop
+      - key: MARIADB_USER
+        value: verificoop_user
+      - key: MARIADB_PASSWORD
+        generateValue: true
+      - key: MARIADB_ROOT_PASSWORD
+        generateValue: true
+
+  - type: web
+    name: verificoop-api
+    env: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: APP_NAME
+        value: VerifiCoop API
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        generateValue: true
+
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        value: verificoop-db
+      - key: DB_PORT
+        value: "3306"
+      - key: DB_DATABASE
+        value: verificoop
+      - key: DB_USERNAME
+        value: verificoop_user
+      - key: DB_PASSWORD
+        sync: false
+
+      - key: RUN_MIGRATIONS
+        value: "true"
